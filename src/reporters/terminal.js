@@ -103,6 +103,12 @@ function printSummary(stats, criticalCount, warningCount, infoCount) {
   const statsLine = `  ${ICONS.package} ${bold(String(stats.totalPackages))} packages scanned`;
   console.log(gray(BOX.vertical) + statsLine + ' '.repeat(Math.max(0, 52 - stripAnsi(statsLine).length)) + gray(BOX.vertical));
 
+  if (typeof stats.durationMs === 'number' && Number.isFinite(stats.durationMs)) {
+    const seconds = (stats.durationMs / 1000).toFixed(2);
+    const timeLine = `  ⏱️  Scanned in ${bold(seconds + 's')}`;
+    console.log(gray(BOX.vertical) + timeLine + ' '.repeat(Math.max(0, 52 - stripAnsi(timeLine).length)) + gray(BOX.vertical));
+  }
+
   if (stats.newPackages > 0) {
     const newLine = `  ${ICONS.new} ${bold(String(stats.newPackages))} new dependencies`;
     console.log(gray(BOX.vertical) + newLine + ' '.repeat(Math.max(0, 52 - stripAnsi(newLine).length)) + gray(BOX.vertical));
