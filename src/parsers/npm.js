@@ -22,6 +22,13 @@ export function parseNpmLockfile(dir) {
     if (err.code === 'ENOENT') {
       throw new Error(`No package-lock.json found in ${dir}`);
     }
+    // Empty or corrupted lockfiles (e.g. merge conflicts) throw SyntaxError from JSON.parse.
+    // Surface a clear message so the CLI exits 2 without a raw Node stack trace.
+    if (err instanceof SyntaxError) {
+      throw new Error(
+        'package-lock.json contains invalid JSON (possibly a merge conflict).'
+      );
+    }
     throw new Error(`Failed to parse package-lock.json: ${err.message}`);
   }
 
