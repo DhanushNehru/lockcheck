@@ -18,6 +18,7 @@
  *   npx lockcheck --json       # Output as JSON (for CI/CD)
  *   npx lockcheck --strict     # Exit 1 on warnings too
  *   npx lockcheck --no-network # Skip npm registry checks
+ *   npx lockcheck --silent     # Exit code only (no terminal output)
  *   npx lockcheck --help       # Show help
  */
 
@@ -35,6 +36,7 @@ const flags = {
   json: args.includes('--json'),
   strict: args.includes('--strict'),
   noNetwork: args.includes('--no-network'),
+  silent: args.includes('--silent'),
   version: args.includes('--version') || args.includes('-v'),
 };
 
@@ -59,24 +61,29 @@ if (flags.help) {
 
 // Run the scan
 try {
+  const started = performance.now();
   const results = await scan(dir, {
     noNetwork: flags.noNetwork,
     strict: flags.strict,
-    onProgress: flags.json ? null : (msg) => {
+    onProgress: flags.json || flags.silent ? null : (msg) => {
       process.stdout.write(`\r  ${ICONS.search} ${dim(msg)}${''.padEnd(40)}`);
     },
   });
+  const durationMs = performance.now() - started;
+  results.stats = { ...(results.stats || {}), durationMs };
 
   // Clear progress line
-  if (!flags.json) {
+  if (!flags.json && !flags.silent) {
     process.stdout.write('\r' + ' '.repeat(60) + '\r');
   }
 
-  // Output results
-  if (flags.json) {
-    printJsonReport(results);
-  } else {
-    printReport(results);
+  // Output results (unless --silent: exit code only)
+  if (!flags.silent) {
+    if (flags.json) {
+      printJsonReport(results);
+    } else {
+      printReport(results);
+    }
   }
 
   process.exit(results.exitCode);
@@ -111,6 +118,7 @@ function printHelp() {
     ${yellow('--json')}         Output results as JSON (for CI/CD pipelines)
     ${yellow('--strict')}       Exit with code 1 on warnings (not just criticals)
     ${yellow('--no-network')}   Skip npm registry checks (offline mode)
+    ${yellow('--silent')}       Suppress all output (exit code only)
     ${yellow('--help, -h')}     Show this help message
     ${yellow('--version, -v')}  Show version number
 

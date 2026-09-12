@@ -148,6 +148,7 @@ Or use it directly:
 | Flag | Description |
 |------|-------------|
 | `--json` | Output results as JSON for CI/CD pipelines |
+| `--silent` | Suppress all terminal output (exit code only) |
 | `--strict` | Exit with code 1 on warnings (not just criticals) |
 | `--no-network` | Skip npm registry API checks (offline mode) |
 | `--help, -h` | Show help message |
