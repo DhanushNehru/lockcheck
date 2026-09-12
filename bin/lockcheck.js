@@ -20,6 +20,7 @@
  *   npx lockcheck --no-network # Skip npm registry checks
  *   npx lockcheck --ignore a,b # Ignore package findings
  *   npx lockcheck --reset-baseline  # Delete baseline snapshot
+ *   npx lockcheck --silent     # Exit code only (no terminal output)
  *   npx lockcheck --help       # Show help
  */
 
@@ -38,6 +39,7 @@ const flags = {
   strict: args.includes('--strict'),
   noNetwork: args.includes('--no-network'),
   resetBaseline: args.includes('--reset-baseline'),
+  silent: args.includes('--silent'),
   version: args.includes('--version') || args.includes('-v'),
 };
 
@@ -96,42 +98,50 @@ if (flags.resetBaseline) {
 
 // Run the scan
 try {
+  const started = Date.now();
   const results = await scan(dir, {
     noNetwork: flags.noNetwork,
     strict: flags.strict,
     ignore: ignoreList,
-    onProgress: flags.json ? null : (msg) => {
+    onProgress: (flags.json || flags.silent) ? null : (msg) => {
       process.stdout.write(`\r  ${ICONS.search} ${dim(msg)}${''.padEnd(40)}`);
     },
   });
+  if (results && results.stats && results.stats.durationMs == null) {
+    results.stats.durationMs = Date.now() - started;
+  }
 
   // Clear progress line
-  if (!flags.json) {
+  if (!flags.json && !flags.silent) {
     process.stdout.write('\r' + ' '.repeat(60) + '\r');
   }
 
-  // Output results
-  if (flags.json) {
-    printJsonReport(results);
-  } else {
-    printReport(results);
+  // Output results (--silent: exit code only, including fatal paths)
+  if (!flags.silent) {
+    if (flags.json) {
+      printJsonReport(results);
+    } else {
+      printReport(results);
+    }
   }
 
   process.exit(results.exitCode);
 } catch (err) {
-  if (flags.json) {
-    console.log(JSON.stringify({ error: err.message }, null, 2));
-  } else {
-    console.error('');
-    console.error(`  ${ICONS.critical} ${red(bold('Error:'))} ${err.message}`);
-    console.error('');
+  if (!flags.silent) {
+    if (flags.json) {
+      console.log(JSON.stringify({ error: err.message }, null, 2));
+    } else {
+      console.error('');
+      console.error(`  ${ICONS.critical} ${red(bold('Error:'))} ${err.message}`);
+      console.error('');
 
-    if (err.message.includes('No package-lock.json')) {
-      console.error(dim('  Make sure you are in a directory with a package-lock.json file,'));
-      console.error(dim('  or specify the path: npx lockcheck ./my-project'));
+      if (err.message.includes('No package-lock.json')) {
+        console.error(dim('  Make sure you are in a directory with a package-lock.json file,'));
+        console.error(dim('  or specify the path: npx lockcheck ./my-project'));
+      }
+
+      console.error('');
     }
-
-    console.error('');
   }
   process.exit(2);
 }
@@ -151,6 +161,7 @@ function printHelp() {
     ${yellow('--no-network')}   Skip npm registry checks (offline mode)
     ${yellow('--ignore')} <list> Comma-separated package names to exclude from findings
     ${yellow('--reset-baseline')} Delete .lockcheck-snapshot.json and exit
+    ${yellow('--silent')}       Exit with code only (no terminal output)
     ${yellow('--help, -h')}     Show this help message
     ${yellow('--version, -v')}  Show version number
 
