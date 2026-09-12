@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+// Require Node 18+ before any other work (ESM/features assume modern Node).
+{
+  const major = Number.parseInt(process.versions.node.split('.')[0], 10);
+  if (!Number.isFinite(major) || major < 18) {
+    console.error('Error: lockcheck requires Node.js v18.0.0 or higher.');
+    process.exit(1);
+  }
+}
+
 /**
  * lockcheck CLI — Detect malicious dependency diffs in lock files.
  *
