@@ -9,6 +9,7 @@
  *   npx lockcheck --json       # Output as JSON (for CI/CD)
  *   npx lockcheck --strict     # Exit 1 on warnings too
  *   npx lockcheck --no-network # Skip npm registry checks
+ *   npx lockcheck --reset-baseline  # Delete baseline snapshot
  *   npx lockcheck --help       # Show help
  */
 
@@ -26,6 +27,7 @@ const flags = {
   json: args.includes('--json'),
   strict: args.includes('--strict'),
   noNetwork: args.includes('--no-network'),
+  resetBaseline: args.includes('--reset-baseline'),
   version: args.includes('--version') || args.includes('-v'),
 };
 
@@ -45,6 +47,24 @@ if (flags.version) {
 
 if (flags.help) {
   printHelp();
+  process.exit(0);
+}
+
+if (flags.resetBaseline) {
+  const { existsSync, unlinkSync } = await import('node:fs');
+  const { resolve } = await import('node:path');
+  const snapshot = resolve(dir, '.lockcheck-snapshot.json');
+  if (existsSync(snapshot)) {
+    unlinkSync(snapshot);
+    console.log('');
+    console.log(`  ${ICONS.check} ${green('Baseline snapshot deleted. The next run will create a new baseline.')}`);
+    console.log('');
+  } else {
+    console.log('');
+    console.log(`  ${ICONS.bullet} ${dim('No baseline snapshot found at')} ${snapshot}`);
+    console.log(`  ${dim('Nothing to delete — the next run will create a new baseline.')}`);
+    console.log('');
+  }
   process.exit(0);
 }
 
@@ -102,6 +122,7 @@ function printHelp() {
     ${yellow('--json')}         Output results as JSON (for CI/CD pipelines)
     ${yellow('--strict')}       Exit with code 1 on warnings (not just criticals)
     ${yellow('--no-network')}   Skip npm registry checks (offline mode)
+    ${yellow('--reset-baseline')} Delete .lockcheck-snapshot.json and exit
     ${yellow('--help, -h')}     Show this help message
     ${yellow('--version, -v')}  Show version number
 
