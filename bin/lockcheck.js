@@ -50,6 +50,24 @@ if (flags.help) {
   process.exit(0);
 }
 
+if (flags.resetBaseline) {
+  const { existsSync, unlinkSync } = await import('node:fs');
+  const { resolve } = await import('node:path');
+  const snapshot = resolve(dir, '.lockcheck-snapshot.json');
+  if (existsSync(snapshot)) {
+    unlinkSync(snapshot);
+    console.log('');
+    console.log(`  ${ICONS.check} ${green('Baseline snapshot deleted. The next run will create a new baseline.')}`);
+    console.log('');
+  } else {
+    console.log('');
+    console.log(`  ${ICONS.bullet} ${dim('No baseline snapshot found at')} ${snapshot}`);
+    console.log(`  ${dim('Nothing to delete — the next run will create a new baseline.')}`);
+    console.log('');
+  }
+  process.exit(0);
+}
+
 // Run the scan
 try {
   const results = await scan(dir, {
