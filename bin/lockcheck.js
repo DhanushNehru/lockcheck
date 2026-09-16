@@ -1,5 +1,17 @@
 #!/usr/bin/env node
 
+// Node 18+ required (native fetch for registry checks)
+{
+  const major = Number.parseInt(process.versions.node.split('.')[0], 10);
+  if (Number.isFinite(major) && major < 18) {
+    console.error(
+      `lockcheck requires Node.js 18 or newer (native fetch). Current: ${process.version}`
+    );
+    process.exit(1);
+  }
+}
+
+
 /**
  * lockcheck CLI — Detect malicious dependency diffs in lock files.
  *
