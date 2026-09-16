@@ -55,6 +55,24 @@ const POPULAR_PACKAGES = [
   // Logging
   'winston', 'pino', 'bunyan', 'debug', 'consola', 'loglevel',
 
+
+  // AI / LLM
+  'openai', 'langchain', 'langsmith', '@anthropic-ai/sdk', 'ollama', 'ai',
+  'vercel', '@vercel/node', 'inngest', 'trigger.dev',
+  // Auth
+  'better-auth', 'lucia', 'clerk', '@clerk/nextjs', 'supabase', '@supabase/supabase-js',
+  // UI kits
+  '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', 'shadcn', 'class-variance-authority',
+  'clsx', 'tailwind-merge', 'framer-motion', 'motion',
+  // Data / forms
+  '@tanstack/react-query', '@tanstack/react-table', 'react-hook-form', '@hookform/resolvers',
+  // State
+  'zustand', 'jotai', 'recoil', 'redux', '@reduxjs/toolkit', 'mobx',
+  // Observability
+  '@sentry/node', '@sentry/react', 'posthog-js', 'mixpanel-browser',
+  // Package managers related
+  'npm', 'yarn', 'pnpm', 'bun',
+
   // Misc popular
   'socket.io', 'ws', 'graphql', 'apollo-server', '@apollo/client',
   'sharp', 'jimp', 'pdf-lib', 'handlebars', 'ejs', 'pug', 'nunjucks',
