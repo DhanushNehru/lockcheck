@@ -86,6 +86,22 @@ const TRUSTED_SCOPES = new Set([
   '@headlessui', '@grpc', '@hapi', '@fastify', '@types',
 ]);
 
+// Common Unicode homograph characters mapped to their Latin look-alikes, so
+// visually-identical packages (e.g. Cyrillic "а" for Latin "a") can't dodge
+// the checks below by relying on raw code-point comparisons.
+const CONFUSABLES = {
+  а: 'a', е: 'e', о: 'o', р: 'p', с: 'c', х: 'x', у: 'y', і: 'i', ј: 'j',
+  ѕ: 's', ԁ: 'd', ԛ: 'q', ѡ: 'w', ﮮ: 'n', ⅰ: 'i', ℓ: 'l',
+};
+
+function normalizeUnicode(str) {
+  return str
+    .normalize('NFKC')
+    .split('')
+    .map((ch) => CONFUSABLES[ch] || ch)
+    .join('');
+}
+
 /**
  * Check if a package name looks like a typosquat of a popular package.
  * @param {string} name - Package name to check
@@ -97,15 +113,28 @@ export function detectTyposquat(name) {
     return { isTyposquat: false, similarTo: null, distance: null, pattern: null };
   }
 
+  // Normalize Unicode homographs before any comparison so look-alike
+  // characters can't be used to bypass detection.
+  const normalizedName = normalizeUnicode(name);
+
+  if (normalizedName !== name && POPULAR_PACKAGES.includes(normalizedName)) {
+    return {
+      isTyposquat: true,
+      similarTo: normalizedName,
+      distance: null,
+      pattern: 'unicode homograph',
+    };
+  }
+
   // Skip packages from trusted scopes
-  const scopeMatch = name.match(/^(@[^/]+)\//); 
+  const scopeMatch = normalizedName.match(/^(@[^/]+)\//); 
   if (scopeMatch && TRUSTED_SCOPES.has(scopeMatch[1])) {
     return { isTyposquat: false, similarTo: null, distance: null, pattern: null };
   }
 
   // Check pattern-based matches first (more specific)
   for (const popular of POPULAR_PACKAGES) {
-    const patternResult = checkTyposquatPatterns(name, popular);
+    const patternResult = checkTyposquatPatterns(normalizedName, popular);
     if (patternResult.match) {
       return {
         isTyposquat: true,
@@ -119,12 +148,12 @@ export function detectTyposquat(name) {
   // Check Levenshtein distance
   for (const popular of POPULAR_PACKAGES) {
     // Skip very short names — too many false positives (ms vs ws, qs vs ws, etc.)
-    if (name.length <= 2 || popular.length <= 2) continue;
+    if (normalizedName.length <= 2 || popular.length <= 2) continue;
 
     // Only compare packages of similar length to reduce false positives
-    if (Math.abs(name.length - popular.length) > 2) continue;
+    if (Math.abs(normalizedName.length - popular.length) > 2) continue;
 
-    const distance = levenshtein(name, popular);
+    const distance = levenshtein(normalizedName, popular);
 
     // Strict threshold: distance of 1 for short names, 2 for longer ones (8+ chars)
     const threshold = popular.length <= 6 ? 1 : 2;
