@@ -16,7 +16,7 @@ import { resolve } from 'node:path';
 /**
  * Run a full lockcheck scan.
  * @param {string} dir - Directory to scan
- * @param {{ noNetwork?: boolean, strict?: boolean, onProgress?: (msg: string) => void }} options
+ * @param {{ noNetwork?: boolean, strict?: boolean, ignore?: string[], onProgress?: (msg: string) => void }} options
  * @returns {Promise<{ findings: Array, stats: object, isFirstRun: boolean, exitCode: number }>}
  */
 export async function scan(dir, options = {}) {
@@ -98,16 +98,22 @@ export async function scan(dir, options = {}) {
   // 5. Save snapshot for next run
   saveSnapshotSync(dir, packages);
 
-  // 6. Determine exit code
-  const criticalCount = allFindings.filter(f => f.severity === 'critical').length;
-  const warningCount = allFindings.filter(f => f.severity === 'warning').length;
+  // 6. Apply --ignore (package names, case-sensitive match on finding.name)
+  const ignore = new Set((options.ignore || []).filter(Boolean));
+  const findings = ignore.size
+    ? allFindings.filter(f => !ignore.has(f.name))
+    : allFindings;
+
+  // 7. Determine exit code (after ignore filter)
+  const criticalCount = findings.filter(f => f.severity === 'critical').length;
+  const warningCount = findings.filter(f => f.severity === 'warning').length;
 
   let exitCode = 0;
   if (criticalCount > 0) exitCode = 1;
   if (options.strict && warningCount > 0) exitCode = 1;
 
   return {
-    findings: allFindings,
+    findings,
     stats,
     isFirstRun,
     exitCode,

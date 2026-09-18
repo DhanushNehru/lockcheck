@@ -18,6 +18,7 @@
  *   npx lockcheck --json       # Output as JSON (for CI/CD)
  *   npx lockcheck --strict     # Exit 1 on warnings too
  *   npx lockcheck --no-network # Skip npm registry checks
+ *   npx lockcheck --ignore a,b # Ignore package findings
  *   npx lockcheck --help       # Show help
  */
 
@@ -37,6 +38,22 @@ const flags = {
   noNetwork: args.includes('--no-network'),
   version: args.includes('--version') || args.includes('-v'),
 };
+
+// --ignore pkg1,pkg2  (value is next arg or =value form)
+function parseIgnoreList(argv) {
+  const names = [];
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--ignore' && argv[i + 1] && !argv[i + 1].startsWith('-')) {
+      names.push(...argv[++i].split(',').map(s => s.trim()).filter(Boolean));
+    } else if (a.startsWith('--ignore=')) {
+      names.push(...a.slice('--ignore='.length).split(',').map(s => s.trim()).filter(Boolean));
+    }
+  }
+  return names;
+}
+const ignoreList = parseIgnoreList(args);
+
 
 // Extract directory argument (first non-flag arg)
 const dir = args.find(a => !a.startsWith('-')) || '.';
@@ -62,6 +79,7 @@ try {
   const results = await scan(dir, {
     noNetwork: flags.noNetwork,
     strict: flags.strict,
+    ignore: ignoreList,
     onProgress: flags.json ? null : (msg) => {
       process.stdout.write(`\r  ${ICONS.search} ${dim(msg)}${''.padEnd(40)}`);
     },
@@ -111,6 +129,7 @@ function printHelp() {
     ${yellow('--json')}         Output results as JSON (for CI/CD pipelines)
     ${yellow('--strict')}       Exit with code 1 on warnings (not just criticals)
     ${yellow('--no-network')}   Skip npm registry checks (offline mode)
+    ${yellow('--ignore')} <list> Comma-separated package names to exclude from findings
     ${yellow('--help, -h')}     Show this help message
     ${yellow('--version, -v')}  Show version number
 
