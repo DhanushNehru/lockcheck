@@ -7,73 +7,48 @@ import { levenshtein, checkTyposquatPatterns } from '../utils/levenshtein.js';
 
 // Top 200 most popular npm packages (curated list)
 const POPULAR_PACKAGES = [
-  // Frameworks & runtimes
-  'react', 'react-dom', 'next', 'vue', 'angular', 'svelte', 'express', 'fastify', 'koa', 'hapi',
-  'nuxt', 'gatsby', 'remix', 'astro', 'solid-js', 'preact', 'lit', 'ember-source',
-
-  // Build tools
-  'webpack', 'vite', 'esbuild', 'rollup', 'parcel', 'turbo', 'tsup', 'swc',
-  'babel-core', '@babel/core', '@babel/preset-env', '@babel/preset-react',
-
-  // Utilities
-  'lodash', 'underscore', 'ramda', 'rxjs', 'date-fns', 'moment', 'dayjs', 'luxon',
-  'uuid', 'nanoid', 'crypto-js', 'bcrypt', 'bcryptjs', 'jsonwebtoken', 'jose',
-  'dotenv', 'cross-env', 'zod', 'yup', 'joi', 'ajv',
-
-  // HTTP & networking
-  'axios', 'node-fetch', 'got', 'undici', 'superagent', 'ky', 'ofetch',
-  'cors', 'helmet', 'cookie-parser', 'body-parser', 'compression', 'morgan',
-
-  // Database
-  'mongoose', 'sequelize', 'knex', 'prisma', '@prisma/client', 'drizzle-orm',
-  'pg', 'mysql2', 'sqlite3', 'better-sqlite3', 'redis', 'ioredis', 'mongodb',
-  'typeorm', 'mikro-orm',
-
-  // Testing
-  'jest', 'mocha', 'chai', 'vitest', 'cypress', 'playwright', 'puppeteer',
-  '@testing-library/react', '@testing-library/jest-dom', 'sinon', 'supertest', 'nock',
-
-  // CLI & output
-  'chalk', 'ora', 'inquirer', 'commander', 'yargs', 'meow', 'minimist',
-  'cli-table3', 'boxen', 'figures', 'listr2', 'progress',
-
-  // TypeScript
-  'typescript', 'ts-node', 'tsx', '@types/node', '@types/react', '@types/jest',
-
-  // Code quality
-  'eslint', 'prettier', 'biome', 'stylelint', 'husky', 'lint-staged',
-  'commitlint', '@commitlint/cli',
-
-  // CSS
-  'tailwindcss', 'postcss', 'autoprefixer', 'sass', 'less', 'styled-components',
-  '@emotion/react', '@emotion/styled', 'css-loader', 'style-loader',
-
-  // File system & process
-  'fs-extra', 'glob', 'globby', 'chokidar', 'rimraf', 'del', 'mkdirp',
-  'execa', 'shelljs', 'cross-spawn', 'concurrently', 'nodemon', 'pm2',
-
-  // Logging
-  'winston', 'pino', 'bunyan', 'debug', 'consola', 'loglevel',
-
-
-  // Popular packages (AI, auth, UI, state) — issue #15 (15–20, alphabetical)
-  '@anthropic-ai/sdk', '@clerk/nextjs', '@radix-ui/react-dialog', '@reduxjs/toolkit',
-  '@sentry/node', '@supabase/supabase-js', '@tanstack/react-query', 'better-auth',
-  'clerk', 'framer-motion', 'jotai', 'langchain', 'ollama', 'openai', 'posthog-js',
-  'react-hook-form', 'zustand', 'clsx',
-
-  // Misc popular
-  'socket.io', 'ws', 'graphql', 'apollo-server', '@apollo/client',
-  'sharp', 'jimp', 'pdf-lib', 'handlebars', 'ejs', 'pug', 'nunjucks',
-  'cheerio', 'jsdom', 'puppeteer-core', 'marked', 'markdown-it', 'highlight.js',
-  'i18next', 'next-auth', 'passport', 'express-session', 'connect-redis',
-  'multer', 'formidable', 'busboy', 'aws-sdk', '@aws-sdk/client-s3',
-  'firebase', 'firebase-admin', 'stripe', 'nodemailer', 'bull', 'bullmq',
-  'amqplib', 'kafkajs', 'cron', 'node-cron',
-
-  // Security
-  'helmet', 'rate-limiter-flexible', 'express-rate-limit', 'csurf', 'hpp',
-  'xss', 'sanitize-html', 'dompurify',
+  '@anthropic-ai/sdk', '@apollo/client', '@aws-sdk/client-s3', '@babel/core', '@babel/preset-env',
+  '@babel/preset-react', '@clerk/nextjs', '@commitlint/cli', '@emotion/react', '@emotion/styled',
+  '@prisma/client', '@radix-ui/react-dialog', '@reduxjs/toolkit', '@sentry/node', '@supabase/supabase-js',
+  '@tanstack/react-query', '@testing-library/jest-dom', '@testing-library/react', '@types/jest', '@types/node',
+  '@types/react', 'ajv', 'amqplib', 'angular', 'apollo-server',
+  'astro', 'autoprefixer', 'aws-sdk', 'axios', 'babel-core',
+  'bcrypt', 'bcryptjs', 'better-auth', 'better-sqlite3', 'biome',
+  'body-parser', 'boxen', 'bull', 'bullmq', 'bunyan',
+  'busboy', 'chai', 'chalk', 'cheerio', 'chokidar',
+  'clerk', 'cli-table3', 'clsx', 'commander', 'commitlint',
+  'compression', 'concurrently', 'connect-redis', 'consola', 'cookie-parser',
+  'cors', 'cron', 'cross-env', 'cross-spawn', 'crypto-js',
+  'css-loader', 'csurf', 'cypress', 'date-fns', 'dayjs',
+  'debug', 'del', 'dompurify', 'dotenv', 'drizzle-orm',
+  'ejs', 'ember-source', 'esbuild', 'eslint', 'execa',
+  'express', 'express-rate-limit', 'express-session', 'fastify', 'figures',
+  'firebase', 'firebase-admin', 'formidable', 'framer-motion', 'fs-extra',
+  'gatsby', 'glob', 'globby', 'got', 'graphql',
+  'handlebars', 'hapi', 'helmet', 'highlight.js', 'hpp',
+  'husky', 'i18next', 'inquirer', 'ioredis', 'jest',
+  'jimp', 'joi', 'jose', 'jotai', 'jsdom',
+  'jsonwebtoken', 'kafkajs', 'knex', 'koa', 'ky',
+  'langchain', 'less', 'lint-staged', 'listr2', 'lit',
+  'lodash', 'loglevel', 'luxon', 'markdown-it', 'marked',
+  'meow', 'mikro-orm', 'minimist', 'mkdirp', 'mocha',
+  'moment', 'mongodb', 'mongoose', 'morgan', 'multer',
+  'mysql2', 'nanoid', 'next', 'next-auth', 'nock',
+  'node-cron', 'node-fetch', 'nodemailer', 'nodemon', 'nunjucks',
+  'nuxt', 'ofetch', 'ollama', 'openai', 'ora',
+  'parcel', 'passport', 'pdf-lib', 'pg', 'pino',
+  'playwright', 'pm2', 'postcss', 'posthog-js', 'preact',
+  'prettier', 'prisma', 'progress', 'pug', 'puppeteer',
+  'puppeteer-core', 'ramda', 'rate-limiter-flexible', 'react', 'react-dom',
+  'react-hook-form', 'redis', 'remix', 'rimraf', 'rollup',
+  'rxjs', 'sanitize-html', 'sass', 'sequelize', 'sharp',
+  'shelljs', 'sinon', 'socket.io', 'solid-js', 'sqlite3',
+  'stripe', 'style-loader', 'styled-components', 'stylelint', 'superagent',
+  'supertest', 'svelte', 'swc', 'tailwindcss', 'ts-node',
+  'tsup', 'tsx', 'turbo', 'typeorm', 'typescript',
+  'underscore', 'undici', 'uuid', 'vite', 'vitest',
+  'vue', 'webpack', 'winston', 'ws', 'xss',
+  'yargs', 'yup', 'zod', 'zustand',
 ];
 
 // Well-known legitimate packages that are short or look like typosquats but aren't
@@ -125,7 +100,7 @@ export function detectTyposquat(name) {
 
   // Check Levenshtein distance
   for (const popular of POPULAR_PACKAGES) {
-    // Skip very short names — too many false positives (ms vs ws, qs vs ws, etc.)
+    // Skip very short names â too many false positives (ms vs ws, qs vs ws, etc.)
     if (name.length <= 2 || popular.length <= 2) continue;
 
     // Only compare packages of similar length to reduce false positives
