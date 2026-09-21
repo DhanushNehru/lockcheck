@@ -1,6 +1,6 @@
 {
   "name": "@dhanushnehru/lockcheck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detect malicious dependency diffs in lock files. Catches supply chain attacks before they catch you.",
   "main": "src/index.js",
   "bin": {
