@@ -127,7 +127,7 @@ export function detectTyposquat(name) {
   }
 
   // Skip packages from trusted scopes
-  const scopeMatch = normalizedName.match(/^(@[^/]+)\//); 
+  const scopeMatch = name.match(/^(@[^/]+)\//); 
   if (scopeMatch && TRUSTED_SCOPES.has(scopeMatch[1])) {
     return { isTyposquat: false, similarTo: null, distance: null, pattern: null };
   }
