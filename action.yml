@@ -1,4 +1,4 @@
-name: 'lockcheck'
+name: 'lockcheck-action'
 description: 'Detect malicious dependency diffs in lock files. Catches supply chain attacks before they catch you.'
 author: 'Dhanush Nehru'
 
