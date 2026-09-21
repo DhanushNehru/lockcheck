@@ -5,7 +5,6 @@
 **Detect malicious dependency diffs in lock files.**
 Catches supply chain attacks before they catch you.
 
-[![npm version](https://img.shields.io/npm/v/@dhanushnehru/lockcheck.svg?style=flat-square&color=cb3837)](https://www.npmjs.com/package/@dhanushnehru/lockcheck)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/DhanushNehru/lockcheck?style=flat-square&color=yellow)](https://github.com/DhanushNehru/lockcheck/stargazers)
 [![zero deps](https://img.shields.io/badge/dependencies-0-brightgreen?style=flat-square)](package.json)
@@ -22,7 +21,7 @@ Every time you run `npm install`, your lockfile changes. **Nobody reviews those 
 ## ⚡ Quick Start
 
 ```bash
-npx @dhanushnehru/lockcheck
+node bin/lockcheck.js
 ```
 
 That's it. No install required. No configuration. No dependencies.
@@ -88,19 +87,19 @@ That's it. No install required. No configuration. No dependencies.
 
 ```bash
 # Scan current directory
-npx @dhanushnehru/lockcheck
+node bin/lockcheck.js
 
 # Scan a specific project
-npx @dhanushnehru/lockcheck ./my-app
+node bin/lockcheck.js ./my-app
 
 # CI/CD mode (JSON output + strict exit codes)
-npx @dhanushnehru/lockcheck --json --strict
+node bin/lockcheck.js --json --strict
 
 # Offline mode (skip npm registry checks)
-npx @dhanushnehru/lockcheck --no-network
+node bin/lockcheck.js --no-network
 
 # Show help
-npx @dhanushnehru/lockcheck --help
+node bin/lockcheck.js --help
 ```
 
 ## 🏗️ How It Works
@@ -140,7 +139,7 @@ Or use it directly:
 
 ```yaml
 - name: Run lockcheck
-  run: npx @dhanushnehru/lockcheck --strict
+  run: node bin/lockcheck.js --strict
 ```
 
 ## 🔧 Options
@@ -193,7 +192,7 @@ lockcheck/
 │   ├── reporters/terminal.js # Beautiful terminal output
 │   └── utils/                # Colors, semver, levenshtein, registry
 ├── action.yml                # GitHub Action
-└── package.json              # Zero dependencies
+└── package.json              # Project metadata
 ```
 
 ## 🤝 Contributing
