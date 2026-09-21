@@ -30,28 +30,32 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
       with:
         node-version: '20'
 
     - name: Run lockcheck
       id: lockcheck
       shell: bash
+      env:
+        INPUT_DIRECTORY: ${{ inputs.directory }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_NO_NETWORK: ${{ inputs.no-network }}
       run: |
         FLAGS=""
-        if [ "${{ inputs.strict }}" = "true" ]; then
+        if [ "$INPUT_STRICT" = "true" ]; then
           FLAGS="$FLAGS --strict"
         fi
-        if [ "${{ inputs.no-network }}" = "true" ]; then
+        if [ "$INPUT_NO_NETWORK" = "true" ]; then
           FLAGS="$FLAGS --no-network"
         fi
 
-        npx @dhanushnehru/lockcheck@latest ${{ inputs.directory }} --json $FLAGS > /tmp/lockcheck-results.json 2>&1 || true
+        npx @dhanushnehru/lockcheck@latest "$INPUT_DIRECTORY" --json $FLAGS > /tmp/lockcheck-results.json 2>&1 || true
 
         echo "findings=$(cat /tmp/lockcheck-results.json)" >> $GITHUB_OUTPUT
 
         # Also run with terminal output for the workflow log
-        npx @dhanushnehru/lockcheck@latest ${{ inputs.directory }} $FLAGS || EXIT_CODE=$?
+        npx @dhanushnehru/lockcheck@latest "$INPUT_DIRECTORY" $FLAGS || EXIT_CODE=$?
         echo "exit-code=${EXIT_CODE:-0}" >> $GITHUB_OUTPUT
 
         if [ "${EXIT_CODE:-0}" -ne 0 ]; then
