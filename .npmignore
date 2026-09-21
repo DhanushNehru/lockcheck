@@ -1,0 +1,18 @@
+# Ignore dev-related and environment files
+.github/
+.vscode/
+node_modules/
+tests/
+coverage/
+
+# Ignore snapshot files
+.lockcheck-snapshot.json
+
+# Ignore config files
+.eslintrc*
+.prettierrc*
+jest.config*
+tsconfig.json
+
+# However, package.json's "files" array is the primary source of truth.
+# This file serves as an extra layer of protection (defense-in-depth).
