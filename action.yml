@@ -50,7 +50,7 @@ runs:
           FLAGS="$FLAGS --no-network"
         fi
 
-        npx @dhanushnehru/lockcheck@latest "$INPUT_DIRECTORY" --json $FLAGS > /tmp/lockcheck-results.json 2>&1 || true
+        npx @dhanushnehru/lockcheck@1.0.1 "$INPUT_DIRECTORY" --json $FLAGS > /tmp/lockcheck-results.json 2>&1 || true
 
         echo "findings=$(cat /tmp/lockcheck-results.json)" >> $GITHUB_OUTPUT
 
