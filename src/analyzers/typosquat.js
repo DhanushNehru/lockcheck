@@ -9,46 +9,47 @@ import { levenshtein, checkTyposquatPatterns } from '../utils/levenshtein.js';
 const POPULAR_PACKAGES = [
   '@anthropic-ai/sdk', '@apollo/client', '@aws-sdk/client-s3', '@babel/core', '@babel/preset-env',
   '@babel/preset-react', '@clerk/nextjs', '@commitlint/cli', '@emotion/react', '@emotion/styled',
-  '@prisma/client', '@radix-ui/react-dialog', '@tanstack/react-query', '@tanstack/react-table', '@testing-library/jest-dom',
-  '@testing-library/react', '@types/jest', '@types/node', '@types/react', 'ajv',
-  'amqplib', 'angular', 'apollo-server', 'astro', 'autoprefixer',
-  'aws-sdk', 'axios', 'babel-core', 'bcrypt', 'bcryptjs',
-  'better-auth', 'better-sqlite3', 'biome', 'body-parser', 'boxen',
-  'bull', 'bullmq', 'bunyan', 'busboy', 'chai',
-  'chalk', 'cheerio', 'chokidar', 'cli-table3', 'clsx',
-  'commander', 'commitlint', 'compression', 'concurrently', 'connect-redis',
-  'consola', 'cookie-parser', 'cors', 'cron', 'cross-env',
-  'cross-spawn', 'crypto-js', 'css-loader', 'csurf', 'cypress',
-  'date-fns', 'dayjs', 'debug', 'del', 'dompurify',
-  'dotenv', 'drizzle-orm', 'ejs', 'ember-source', 'esbuild',
-  'eslint', 'execa', 'express', 'express-rate-limit', 'express-session',
-  'fastify', 'figures', 'firebase', 'firebase-admin', 'formidable',
-  'framer-motion', 'fs-extra', 'gatsby', 'glob', 'globby',
-  'got', 'graphql', 'handlebars', 'hapi', 'helmet',
-  'highlight.js', 'hpp', 'husky', 'i18next', 'inquirer',
-  'ioredis', 'jest', 'jimp', 'joi', 'jose',
-  'jotai', 'jsdom', 'jsonwebtoken', 'kafkajs', 'knex',
-  'koa', 'ky', 'langchain', 'less', 'lint-staged',
-  'listr2', 'lit', 'lodash', 'loglevel', 'luxon',
-  'markdown-it', 'marked', 'meow', 'mikro-orm', 'minimist',
-  'mixpanel', 'mkdirp', 'mocha', 'moment', 'mongodb',
-  'mongoose', 'morgan', 'multer', 'mysql2', 'nanoid',
-  'next', 'next-auth', 'nock', 'node-cron', 'node-fetch',
-  'nodemailer', 'nodemon', 'nunjucks', 'nuxt', 'ofetch',
-  'ollama', 'openai', 'ora', 'parcel', 'passport',
-  'pdf-lib', 'pg', 'pino', 'playwright', 'pm2',
-  'postcss', 'posthog-js', 'preact', 'prettier', 'prisma',
-  'progress', 'pug', 'puppeteer', 'puppeteer-core', 'ramda',
-  'rate-limiter-flexible', 'react', 'react-dom', 'react-hook-form', 'redis',
-  'remix', 'rimraf', 'rollup', 'rxjs', 'sanitize-html',
-  'sass', 'sequelize', 'sharp', 'shelljs', 'sinon',
-  'socket.io', 'solid-js', 'sqlite3', 'stripe', 'style-loader',
-  'styled-components', 'stylelint', 'superagent', 'supertest', 'svelte',
-  'swc', 'tailwindcss', 'ts-node', 'tsup', 'tsx',
-  'turbo', 'typeorm', 'typescript', 'underscore', 'undici',
-  'uuid', 'vite', 'vitest', 'vue', 'webpack',
-  'winston', 'ws', 'xss', 'yargs', 'yup',
-  'zod', 'zustand',
+  '@prisma/client', '@radix-ui/react-dialog', '@reduxjs/toolkit', '@sentry/node', '@supabase/supabase-js',
+  '@tanstack/react-query', '@tanstack/react-table', '@testing-library/jest-dom', '@testing-library/react', '@types/jest',
+  '@types/node', '@types/react', 'ajv', 'amqplib', 'angular',
+  'apollo-server', 'astro', 'autoprefixer', 'aws-sdk', 'axios',
+  'babel-core', 'bcrypt', 'bcryptjs', 'better-auth', 'better-sqlite3',
+  'biome', 'body-parser', 'boxen', 'bull', 'bullmq',
+  'bunyan', 'busboy', 'chai', 'chalk', 'cheerio',
+  'chokidar', 'clerk', 'cli-table3', 'clsx', 'commander',
+  'commitlint', 'compression', 'concurrently', 'connect-redis', 'consola',
+  'cookie-parser', 'cors', 'cron', 'cross-env', 'cross-spawn',
+  'crypto-js', 'css-loader', 'csurf', 'cypress', 'date-fns',
+  'dayjs', 'debug', 'del', 'dompurify', 'dotenv',
+  'drizzle-orm', 'ejs', 'ember-source', 'esbuild', 'eslint',
+  'execa', 'express', 'express-rate-limit', 'express-session', 'fastify',
+  'figures', 'firebase', 'firebase-admin', 'formidable', 'framer-motion',
+  'fs-extra', 'gatsby', 'glob', 'globby', 'got',
+  'graphql', 'handlebars', 'hapi', 'helmet', 'highlight.js',
+  'hpp', 'husky', 'i18next', 'inquirer', 'ioredis',
+  'jest', 'jimp', 'joi', 'jose', 'jotai',
+  'jsdom', 'jsonwebtoken', 'kafkajs', 'knex', 'koa',
+  'ky', 'langchain', 'less', 'lint-staged', 'listr2',
+  'lit', 'lodash', 'loglevel', 'luxon', 'markdown-it',
+  'marked', 'meow', 'mikro-orm', 'minimist', 'mixpanel',
+  'mkdirp', 'mocha', 'moment', 'mongodb', 'mongoose',
+  'morgan', 'multer', 'mysql2', 'nanoid', 'next',
+  'next-auth', 'nock', 'node-cron', 'node-fetch', 'nodemailer',
+  'nodemon', 'nunjucks', 'nuxt', 'ofetch', 'ollama',
+  'openai', 'ora', 'parcel', 'passport', 'pdf-lib',
+  'pg', 'pino', 'playwright', 'pm2', 'postcss',
+  'posthog-js', 'preact', 'prettier', 'prisma', 'progress',
+  'pug', 'puppeteer', 'puppeteer-core', 'ramda', 'rate-limiter-flexible',
+  'react', 'react-dom', 'react-hook-form', 'redis', 'remix',
+  'rimraf', 'rollup', 'rxjs', 'sanitize-html', 'sass',
+  'sequelize', 'sharp', 'shelljs', 'sinon', 'socket.io',
+  'solid-js', 'sqlite3', 'stripe', 'style-loader', 'styled-components',
+  'stylelint', 'superagent', 'supertest', 'svelte', 'swc',
+  'tailwindcss', 'ts-node', 'tsup', 'tsx', 'turbo',
+  'typeorm', 'typescript', 'underscore', 'undici', 'uuid',
+  'vite', 'vitest', 'vue', 'webpack', 'winston',
+  'ws', 'xss', 'yargs', 'yup', 'zod',
+  'zustand',
 ];
 
 // Well-known legitimate packages that are short or look like typosquats but aren't
@@ -68,6 +69,22 @@ const TRUSTED_SCOPES = new Set([
   '@headlessui', '@grpc', '@hapi', '@fastify', '@types',
 ]);
 
+// Common Unicode homograph characters mapped to their Latin look-alikes, so
+// visually-identical packages (e.g. Cyrillic "а" for Latin "a") can't dodge
+// the checks below by relying on raw code-point comparisons.
+const CONFUSABLES = {
+  а: 'a', е: 'e', о: 'o', р: 'p', с: 'c', х: 'x', у: 'y', і: 'i', ј: 'j',
+  ѕ: 's', ԁ: 'd', ԛ: 'q', ѡ: 'w', ﮮ: 'n', ⅰ: 'i', ℓ: 'l',
+};
+
+function normalizeUnicode(str) {
+  return str
+    .normalize('NFKC')
+    .split('')
+    .map((ch) => CONFUSABLES[ch] || ch)
+    .join('');
+}
+
 /**
  * Check if a package name looks like a typosquat of a popular package.
  * @param {string} name - Package name to check
@@ -79,6 +96,19 @@ export function detectTyposquat(name) {
     return { isTyposquat: false, similarTo: null, distance: null, pattern: null };
   }
 
+  // Normalize Unicode homographs before any comparison so look-alike
+  // characters can't be used to bypass detection.
+  const normalizedName = normalizeUnicode(name);
+
+  if (normalizedName !== name && POPULAR_PACKAGES.includes(normalizedName)) {
+    return {
+      isTyposquat: true,
+      similarTo: normalizedName,
+      distance: null,
+      pattern: 'unicode homograph',
+    };
+  }
+
   // Skip packages from trusted scopes
   const scopeMatch = name.match(/^(@[^/]+)\//); 
   if (scopeMatch && TRUSTED_SCOPES.has(scopeMatch[1])) {
@@ -87,7 +117,7 @@ export function detectTyposquat(name) {
 
   // Check pattern-based matches first (more specific)
   for (const popular of POPULAR_PACKAGES) {
-    const patternResult = checkTyposquatPatterns(name, popular);
+    const patternResult = checkTyposquatPatterns(normalizedName, popular);
     if (patternResult.match) {
       return {
         isTyposquat: true,
@@ -100,13 +130,13 @@ export function detectTyposquat(name) {
 
   // Check Levenshtein distance
   for (const popular of POPULAR_PACKAGES) {
-    // Skip very short names â too many false positives (ms vs ws, qs vs ws, etc.)
-    if (name.length <= 2 || popular.length <= 2) continue;
+    // Skip very short names — too many false positives (ms vs ws, qs vs ws, etc.)
+    if (normalizedName.length <= 2 || popular.length <= 2) continue;
 
     // Only compare packages of similar length to reduce false positives
-    if (Math.abs(name.length - popular.length) > 2) continue;
+    if (Math.abs(normalizedName.length - popular.length) > 2) continue;
 
-    const distance = levenshtein(name, popular);
+    const distance = levenshtein(normalizedName, popular);
 
     // Strict threshold: distance of 1 for short names, 2 for longer ones (8+ chars)
     const threshold = popular.length <= 6 ? 1 : 2;
