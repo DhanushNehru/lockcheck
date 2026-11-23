@@ -47,6 +47,7 @@ export const info = (str) => bold(cyan(str));
 export const ICONS = {
   check: isColorSupported ? '✅' : '[OK]',
   warning: isColorSupported ? '⚠️ ' : '[WARN]',
+  timer: isColorSupported ? '⏱️' : '[TIME]',
   critical: isColorSupported ? '🔴' : '[CRIT]',
   lock: isColorSupported ? '🔒' : '[LOCK]',
   package: isColorSupported ? '📦' : '[PKG]',
