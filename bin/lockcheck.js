@@ -82,21 +82,30 @@ if (flags.help) {
 }
 
 if (flags.resetBaseline) {
-  const { existsSync, unlinkSync } = await import('node:fs');
-  const { resolve } = await import('node:path');
-  const snapshot = resolve(dir, '.lockcheck-snapshot.json');
-  if (existsSync(snapshot)) {
-    unlinkSync(snapshot);
-    console.log('');
-    console.log(`  ${ICONS.check} ${green('Baseline snapshot deleted. The next run will create a new baseline.')}`);
-    console.log('');
-  } else {
-    console.log('');
-    console.log(`  ${ICONS.bullet} ${dim('No baseline snapshot found at')} ${snapshot}`);
-    console.log(`  ${dim('Nothing to delete — the next run will create a new baseline.')}`);
-    console.log('');
+  try {
+    const { existsSync, unlinkSync } = await import('node:fs');
+    const { resolve } = await import('node:path');
+    const snapshot = resolve(dir, '.lockcheck-snapshot.json');
+    if (existsSync(snapshot)) {
+      unlinkSync(snapshot);
+      if (!flags.silent) {
+        console.log('');
+        console.log(`  ${ICONS.check} ${green('Baseline snapshot deleted. The next run will create a new baseline.')}`);
+        console.log('');
+      }
+    } else if (!flags.silent) {
+      console.log('');
+      console.log(`  ${ICONS.bullet} ${dim('No baseline snapshot found at')} ${snapshot}`);
+      console.log(`  ${dim('Nothing to delete. The next run will create a new baseline.')}`);
+      console.log('');
+    }
+    process.exit(0);
+  } catch (err) {
+    if (!flags.silent) {
+      console.error(`  ${ICONS.critical} ${red(bold('Error:'))} ${err.message}`);
+    }
+    process.exit(2);
   }
-  process.exit(0);
 }
 
 // Run the scan
