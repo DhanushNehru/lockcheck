@@ -2,9 +2,12 @@
 
 // Node 18+ required (native fetch for registry checks)
 {
+  const silentEarly = process.argv.includes('--silent');
   const major = Number.parseInt(process.versions.node.split('.')[0], 10);
   if (!Number.isFinite(major) || major < 18) {
-    console.error(`lockcheck requires Node.js 18 or newer (current: ${process.version}).`);
+    if (!silentEarly) {
+      console.error(`lockcheck requires Node.js 18 or newer (current: ${process.version}).`);
+    }
     process.exit(1);
   }
 }
